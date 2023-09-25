@@ -23,6 +23,9 @@ spring:
     default-property-inclusion: non_null # JSON?????????
 mybatis-plus:
   type-aliases-package: com.bankcomm.demobankcomm.entity # ?????
+  configuration:
+    cache-enabled: false
+    local-cache-scope: statement # 关闭一级缓存
 logging:
   level:
     com.bankcomm: debug

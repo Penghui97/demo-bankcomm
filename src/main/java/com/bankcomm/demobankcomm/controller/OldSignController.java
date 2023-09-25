@@ -38,14 +38,14 @@ public class OldSignController {
         return oldSignService.maxContinue(idYearMonth);
     }
 
-    @PostMapping("/sign/{idYearMonthDay}")
-    public boolean sign(@PathVariable String idYearMonthDay) {
+    @PostMapping("/sign")
+    public boolean sign(@RequestBody String idYearMonthDay) {
         return oldSignService.sign(idYearMonthDay);
     }
 
-    @PutMapping("/supplementary/{idYearMonthDay}")
+    @PutMapping("/supplementary")
     // 补签
-    public boolean supplementary(@PathVariable String idYearMonthDay) {
+    public boolean supplementary(@RequestBody String idYearMonthDay) {
         return oldSignService.supplementary(idYearMonthDay);
     }
 
