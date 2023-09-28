@@ -1,7 +1,5 @@
 package com.bankcomm.demobankcomm.utils;
 
-import java.util.*;
-
 /**
  * Created with IntelliJ IDEA.
  * User: Phantom Sean
@@ -32,7 +30,7 @@ public class ByteConvertUtil {
      * @param string 要转化的字符串
      * @return byte数组
      */
-    public static byte[] string2Byte(String string) {
+    public static byte[] string2ByteArray(String string) {
         String binaryString = string.length() == 32 ? string : add0(string);
         byte[] bytes = new byte[4];
         for (int i = 0; i < 4; i++) {
@@ -52,5 +50,28 @@ public class ByteConvertUtil {
         }
         return sb.toString();
     }
+
+    // 字节数组转long
+    public static Long byteArrayToLong(byte[] byteArray) {
+        long result = 0;
+        for (int i = 0; i < 4; i++) {
+            result <<= 8; // 左移8位，为下一个字节腾出位置
+            result |= (byteArray[i] & 0xFF); // 使用位或操作将字节添加到结果中
+        }
+
+        return result;
+    }
+
+    // long转字节数组
+    public static byte[] longToByteArray(long number) {
+        byte[] byteArray = new byte[4];
+        for (int i = 3; i >= 0; i--) {
+            byteArray[i] = (byte) (number & 0xFF);
+            number >>= 8; // 右移8位，继续处理下一个字节
+        }
+        return byteArray;
+    }
+
+
 }
 

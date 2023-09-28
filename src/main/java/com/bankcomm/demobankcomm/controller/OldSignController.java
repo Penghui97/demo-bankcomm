@@ -1,6 +1,7 @@
 package com.bankcomm.demobankcomm.controller;
 
 import com.bankcomm.demobankcomm.entity.OldSign;
+import com.bankcomm.demobankcomm.mapper.OldSignMapper;
 import com.bankcomm.demobankcomm.service.IOldSignService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,8 @@ import java.util.*;
 public class OldSignController {
     @Resource
     private IOldSignService oldSignService;
+    @Resource
+    private OldSignMapper oldSignMapper;
 
     @GetMapping("/info/{idYearMonth}")
     public List<OldSign> getOldSignList(@PathVariable("idYearMonth") String idYearMonth) {

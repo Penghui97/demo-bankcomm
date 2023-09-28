@@ -22,15 +22,13 @@ import java.util.List;
 public class OldSignServiceImp extends ServiceImpl<OldSignMapper, OldSign> implements IOldSignService {
     @Override
     public List<OldSign> getSignedList(String idYearMonth) {
-        QueryWrapper<OldSign> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("id", idYearMonth + "%");
-        return list(queryWrapper);
+        return query().likeRight("id", idYearMonth).list();
     }
 
     @Override
     public int signedCount(String idYearMonth) {
-        return query().like("id", idYearMonth + "%")
-                        .eq("signed", 1).count();
+        return query().eq("signed", 1)
+                .likeRight("id", "_" + idYearMonth).count();
     }
 
     @Override
