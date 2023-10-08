@@ -1,3 +1,5 @@
-
-*.iml
-.idea/dataSources.xml
+target/
+.idea/
+demo-bankcomm.iml
+demo-bankcomm.iml
+demo-bankcomm.iml

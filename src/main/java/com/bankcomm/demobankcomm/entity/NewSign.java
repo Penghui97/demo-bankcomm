@@ -13,19 +13,18 @@ import java.io.Serializable;
 /**
  * Created with IntelliJ IDEA.
  * User: Phantom Sean
- * Date: 2023/9/24
- * Time: 13:53
+ * Date: 2023/9/27
+ * Time: 09:16
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("old_sign")
-public class OldSign implements Serializable {
+@TableName("new_sign")
+public class NewSign implements Serializable {
     @TableId(value = "id")
     private String id;
-    private Integer signed;
+    private byte[] signed;
 }
 

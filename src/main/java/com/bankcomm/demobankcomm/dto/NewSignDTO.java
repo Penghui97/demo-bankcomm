@@ -1,31 +1,24 @@
-package com.bankcomm.demobankcomm.entity;
+package com.bankcomm.demobankcomm.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-
 /**
  * Created with IntelliJ IDEA.
  * User: Phantom Sean
- * Date: 2023/9/24
- * Time: 13:53
+ * Date: 2023/9/28
+ * Time: 14:15
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("old_sign")
-public class OldSign implements Serializable {
-    @TableId(value = "id")
+public class NewSignDTO {
     private String id;
-    private Integer signed;
+    private String signed;
 }
 

@@ -6,6 +6,8 @@ import com.bankcomm.demobankcomm.service.IOldSignService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,15 +22,13 @@ import java.util.List;
 public class OldSignServiceImp extends ServiceImpl<OldSignMapper, OldSign> implements IOldSignService {
     @Override
     public List<OldSign> getSignedList(String idYearMonth) {
-        QueryWrapper<OldSign> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("id", idYearMonth + "%");
-        return list(queryWrapper);
+        return query().likeRight("id", idYearMonth).list();
     }
 
     @Override
     public int signedCount(String idYearMonth) {
-        return query().like("id", idYearMonth + "%")
-                        .eq("signed", 1).count();
+        return query().eq("signed", 1)
+                .likeRight("id", idYearMonth).count();
     }
 
     @Override
