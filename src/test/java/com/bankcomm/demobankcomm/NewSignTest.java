@@ -69,9 +69,9 @@ class NewSignTest {
     void addUseless() {
         Set<Integer> set30 = new HashSet<>();
         set30.add(4);set30.add(6);set30.add(9);set30.add(11);
-        int userId = 100125;
-        for (int m = 0; m < 100000; m++) {
-            String idPrefix = userId + ":2023-0";
+        int userId = 0;
+        for (int m = 0; m < 50000; m++) {
+            String idPrefix = "t" + userId + ":2023-0";
             for (int i = 1; i < 10; i++) {
                 String id = idPrefix + i;
                 int l;
@@ -84,7 +84,7 @@ class NewSignTest {
 
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
-                String key = userId + ":2023:0" + i;
+                String key = "t" + userId + ":2023:0" + i;
                 for (int j = 0; j < l; j++) {
                     String oldId = j < 9 ? id + "-0" + (j + 1) : id + "-" + (j + 1);
                     int r = random.nextInt(2);
@@ -103,9 +103,9 @@ class NewSignTest {
     void addUseless2() {
         Set<Integer> set30 = new HashSet<>();
         set30.add(4);set30.add(6);set30.add(9);set30.add(11);
-        int userId = 200126;
-        for (int m = 0; m < 100000; m++) {
-            String idPrefix = userId + ":2023-0";
+        int userId = 50000;
+        for (int m = 0; m < 50000; m++) {
+            String idPrefix = "t" + userId + ":2023-0";
             for (int i = 1; i < 10; i++) {
                 String id = idPrefix + i;
                 int l;
@@ -118,7 +118,7 @@ class NewSignTest {
 
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
-                String key = userId + ":2023:0" + i;
+                String key = "t" + userId + ":2023:0" + i;
                 for (int j = 0; j < l; j++) {
                     String oldId = j < 9 ? id + "-0" + (j + 1) : id + "-" + (j + 1);
                     int r = random.nextInt(2);
@@ -137,9 +137,9 @@ class NewSignTest {
     void addUseless3() {
         Set<Integer> set30 = new HashSet<>();
         set30.add(4);set30.add(6);set30.add(9);set30.add(11);
-        int userId = 300127;
-        for (int m = 0; m < 100000; m++) {
-            String idPrefix = userId + ":2023-0";
+        int userId = 100000;
+        for (int m = 0; m < 50000; m++) {
+            String idPrefix = "t" + userId + ":2023-0";
             for (int i = 1; i < 10; i++) {
                 String id = idPrefix + i;
                 int l;
@@ -152,7 +152,7 @@ class NewSignTest {
 
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
-                String key = userId + ":2023:0" + i;
+                String key = "t" + userId + ":2023:0" + i;
                 for (int j = 0; j < l; j++) {
                     String oldId = j < 9 ? id + "-0" + (j + 1) : id + "-" + (j + 1);
                     int r = random.nextInt(2);
@@ -171,9 +171,9 @@ class NewSignTest {
     void addUseless4() {
         Set<Integer> set30 = new HashSet<>();
         set30.add(4);set30.add(6);set30.add(9);set30.add(11);
-        int userId = 400127;
+        int userId = 150000;
         for (int m = 0; m < 50000; m++) {
-            String idPrefix = userId + ":2023-0";
+            String idPrefix = "t" + userId + ":2023-0";
             for (int i = 1; i < 10; i++) {
                 String id = idPrefix + i;
                 int l;
@@ -186,7 +186,7 @@ class NewSignTest {
 
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
-                String key = userId + ":2023:0" + i;
+                String key = "t" + userId + ":2023:0" + i;
                 for (int j = 0; j < l; j++) {
                     String oldId = j < 9 ? id + "-0" + (j + 1) : id + "-" + (j + 1);
                     int r = random.nextInt(2);
@@ -205,9 +205,9 @@ class NewSignTest {
     void addUseless5() {
         Set<Integer> set30 = new HashSet<>();
         set30.add(4);set30.add(6);set30.add(9);set30.add(11);
-        int userId = 450127;
+        int userId = 200000;
         for (int m = 0; m < 50000; m++) {
-            String idPrefix = userId + ":2023-0";
+            String idPrefix = "t" + userId + ":2023-0";
             for (int i = 1; i < 10; i++) {
                 String id = idPrefix + i;
                 int l;
@@ -220,7 +220,7 @@ class NewSignTest {
 
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
-                String key = userId + ":2023:0" + i;
+                String key = "t" + userId + ":2023:0" + i;
                 for (int j = 0; j < l; j++) {
                     String oldId = j < 9 ? id + "-0" + (j + 1) : id + "-" + (j + 1);
                     int r = random.nextInt(2);
@@ -239,9 +239,9 @@ class NewSignTest {
     void addUseless6() {
         Set<Integer> set30 = new HashSet<>();
         set30.add(4);set30.add(6);set30.add(9);set30.add(11);
-        int userId = 500127;
+        int userId = 250000;
         for (int m = 0; m < 50000; m++) {
-            String idPrefix = userId + ":2023-0";
+            String idPrefix = "t" + userId + ":2023-0";
             for (int i = 1; i < 10; i++) {
                 String id = idPrefix + i;
                 int l;
@@ -254,7 +254,7 @@ class NewSignTest {
 
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
-                String key = userId + ":2023:0" + i;
+                String key = "t" + userId + ":2023:0" + i;
                 for (int j = 0; j < l; j++) {
                     String oldId = j < 9 ? id + "-0" + (j + 1) : id + "-" + (j + 1);
                     int r = random.nextInt(2);
@@ -273,9 +273,9 @@ class NewSignTest {
     void addUseless7() {
         Set<Integer> set30 = new HashSet<>();
         set30.add(4);set30.add(6);set30.add(9);set30.add(11);
-        int userId = 550127;
+        int userId = 300000;
         for (int m = 0; m < 50000; m++) {
-            String idPrefix = userId + ":2023-0";
+            String idPrefix = "t" + userId + ":2023-0";
             for (int i = 1; i < 10; i++) {
                 String id = idPrefix + i;
                 int l;
@@ -288,7 +288,7 @@ class NewSignTest {
 
                 Random random = new Random();
                 StringBuilder sb = new StringBuilder();
-                String key = userId + ":2023:0" + i;
+                String key = "t" + userId + ":2023:0" + i;
                 for (int j = 0; j < l; j++) {
                     String oldId = j < 9 ? id + "-0" + (j + 1) : id + "-" + (j + 1);
                     int r = random.nextInt(2);
@@ -305,20 +305,22 @@ class NewSignTest {
     @Test
     void getTest() {
         List<Long> result = stringRedisTemplate.opsForValue().bitField(
-                "123:2023:07",
+                "123:2023:06",
                 BitFieldSubCommands.create()
                         .get(BitFieldSubCommands.BitFieldType.unsigned(32)).valueAt(0)
         );
         assert result != null;
         Long l = result.get(0);
         log.info("l: " + l);
-        NewSign newSign = newSignService.getById("123:2023-07");
+        NewSign newSign = newSignService.getById("123:2023-06");
         byte[] bytes = newSign.getSigned();
         log.info(Arrays.toString(bytes));
+        log.info(ByteConvertUtil.byteArray2BinaryString(bytes));
+        log.info("1的个数：" + ByteConvertUtil.countOnesInByteArray(bytes));
+        log.info("最大连续1: " + ByteConvertUtil.maxContinue(bytes));
         log.info(ByteConvertUtil.byteArrayToLong(bytes).toString());
         log.info(Arrays.toString(ByteConvertUtil.longToByteArray(l)));
 
     }
-
 }
 

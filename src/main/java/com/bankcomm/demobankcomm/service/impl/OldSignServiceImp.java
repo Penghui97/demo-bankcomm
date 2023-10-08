@@ -28,7 +28,7 @@ public class OldSignServiceImp extends ServiceImpl<OldSignMapper, OldSign> imple
     @Override
     public int signedCount(String idYearMonth) {
         return query().eq("signed", 1)
-                .likeRight("id", "_" + idYearMonth).count();
+                .likeRight("id", idYearMonth).count();
     }
 
     @Override

@@ -72,6 +72,34 @@ public class ByteConvertUtil {
         return byteArray;
     }
 
+    // 字节数组转为二进制后1的个数
+    public static int countOnesInByteArray(byte[] byteArray) {
+        int count = 0;
+        for (byte b : byteArray) {
+            int bits = b & 0xFF; // 将字节转化为无符号整数
+            while (bits > 0) {
+                count += bits & 1;
+                bits >>= 1;
+            }
+        }
+        return count;
+    }
 
+    // 字节数组转位二进制后最大连续1的次数
+    public static int maxContinue(byte[] byteArray) {
+        int maxCount = 0; // 存储最大连续1的个数
+        int currentCount = 0; // 存储当前连续1的个数
+
+        for (int i = 3; i >= 0; i--) {
+            int bits = byteArray[i] & 0xFF; // 将字节转化为无符号整数
+
+            while (bits > 0) {
+                currentCount = (bits & 1) == 1 ? currentCount + 1 : 0; // 更新当前连续1的计数
+                maxCount = Math.max(maxCount, currentCount); // 更新最大连续1的计数
+                bits >>= 1;
+            }
+        }
+        return maxCount;
+    }
 }
 
