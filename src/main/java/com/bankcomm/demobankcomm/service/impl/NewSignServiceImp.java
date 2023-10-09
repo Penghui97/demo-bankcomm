@@ -1,5 +1,6 @@
 package com.bankcomm.demobankcomm.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.bankcomm.demobankcomm.dto.NewSignDTO;
 import com.bankcomm.demobankcomm.entity.NewSign;
 import com.bankcomm.demobankcomm.mapper.NewSignMapper;
@@ -7,12 +8,20 @@ import com.bankcomm.demobankcomm.service.INewSignService;
 import com.bankcomm.demobankcomm.utils.ByteConvertUtil;
 import com.bankcomm.demobankcomm.utils.NewSignConvert;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.data.redis.connection.BitFieldSubCommands;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,6 +31,11 @@ import java.util.List;
  */
 @Service
 public class NewSignServiceImp extends ServiceImpl<NewSignMapper, NewSign> implements INewSignService {
+    private static final ExecutorService SIGN_EXECUTOR = Executors.newFixedThreadPool(2);
+    @PostConstruct
+    private void init() {
+        SIGN_EXECUTOR.submit(new SignHandler());
+    }
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     public NewSignDTO getNewSignDTO(String idYearMonth) {
@@ -57,6 +71,55 @@ public class NewSignServiceImp extends ServiceImpl<NewSignMapper, NewSign> imple
     public int maxContinue(String idYearMonth) {
         byte[] signed = getById(idYearMonth).getSigned();
         return ByteConvertUtil.maxContinue(signed);
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class SignData {
+        private String key;
+        private int day;
+        private NewSign newSign;
+    }
+    // 用阻塞队列模拟消息队列异步更新
+    private final BlockingQueue<SignData> signTasks = new LinkedBlockingQueue<>();
+    // 异步更新签到数据库任务
+    private class SignHandler implements Runnable {
+        @Override
+        public void run() {
+            for (;;) {
+                NewSign newSign;
+                int day;
+                String key;
+                try {
+                    SignData signData = signTasks.take();
+                    newSign = signData.getNewSign();
+                    day = signData.getDay();
+                    key = signData.getKey();
+                    // 更新redis
+                    stringRedisTemplate.opsForValue().setBit(key, day - 1, true);
+                    // 更新签到数据库
+                    if (getById(newSign.getId()) == null)
+                        save(newSign);
+                    else
+                        updateById(newSign);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Boolean sign(String json) {
+        Map<String, String> map = JSONUtil.toBean(json, Map.class);
+        String key = map.get("key");
+        int day = Integer.parseInt(map.get("day"));
+        String id = map.get("id");
+        String signed = map.get("signed");
+
+        // 异步更新redis和数据库
+        NewSign newSign = new NewSign(id, ByteConvertUtil.string2ByteArray(signed));
+        return signTasks.add(new SignData(key, day, newSign));
     }
 }
 
