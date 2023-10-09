@@ -31,7 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Service
 public class NewSignServiceImp extends ServiceImpl<NewSignMapper, NewSign> implements INewSignService {
-    private static final ExecutorService SIGN_EXECUTOR = Executors.newFixedThreadPool(2);
+    private static final ExecutorService SIGN_EXECUTOR = Executors.newSingleThreadExecutor();
     @PostConstruct
     private void init() {
         SIGN_EXECUTOR.submit(new SignHandler());
@@ -120,6 +120,12 @@ public class NewSignServiceImp extends ServiceImpl<NewSignMapper, NewSign> imple
         // 异步更新redis和数据库
         NewSign newSign = new NewSign(id, ByteConvertUtil.string2ByteArray(signed));
         return signTasks.add(new SignData(key, day, newSign));
+    }
+
+    // 补签
+    @Override
+    public Boolean supplementary(String json) {
+        return sign(json);
     }
 }
 

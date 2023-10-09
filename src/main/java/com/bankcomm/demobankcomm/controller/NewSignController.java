@@ -48,6 +48,11 @@ public class NewSignController {
         return newSignService.sign(json);
     }
 
+    // 补签
+    @PutMapping("/supplementary")
+    public Boolean supplementary(@RequestBody String json) {
+        return newSignService.supplementary(json);
+    }
 
 }
 

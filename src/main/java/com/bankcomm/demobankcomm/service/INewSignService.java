@@ -11,4 +11,6 @@ public interface INewSignService extends IService<NewSign> {
     int maxContinue(String idYearMonth);
 
     Boolean sign(String idYearMonth);
+
+    Boolean supplementary(String json);
 }
