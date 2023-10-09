@@ -1,11 +1,13 @@
 package com.bankcomm.demobankcomm.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.bankcomm.demobankcomm.dto.NewSignDTO;
 import com.bankcomm.demobankcomm.service.INewSignService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,6 +40,12 @@ public class NewSignController {
     @GetMapping("/info/max_continue_days/{idYearMonth}")
     public int maxContinue(@PathVariable String idYearMonth) {
         return newSignService.maxContinue(idYearMonth);
+    }
+
+    // 签到
+    @PostMapping("/sign")
+    public Boolean sign(@RequestBody String json) {
+        return newSignService.sign(json);
     }
 
 
