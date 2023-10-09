@@ -1,5 +1,10 @@
+### IntelliJ IDEA ###
+.idea
+*.iml
+
+# Mac
+.DS_Store
+
+# Maven
+log/
 target/
-.idea/
-demo-bankcomm.iml
-demo-bankcomm.iml
-demo-bankcomm.iml
