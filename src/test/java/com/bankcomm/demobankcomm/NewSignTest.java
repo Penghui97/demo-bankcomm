@@ -322,5 +322,15 @@ class NewSignTest {
         log.info(Arrays.toString(ByteConvertUtil.longToByteArray(l)));
 
     }
+
+    @Test
+    void testKey() {
+        String m = "123:2023-02-08";
+        String temp = m.replace('-', ':');
+        String key = temp.substring(0, temp.length() - 3);
+        log.info("key " + key);
+        int day = Integer.parseInt(temp.substring(temp.length() - 2));
+        log.info("day " + day);
+    }
 }
 
