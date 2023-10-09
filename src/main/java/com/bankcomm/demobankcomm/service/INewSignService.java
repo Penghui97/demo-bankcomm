@@ -9,4 +9,6 @@ public interface INewSignService extends IService<NewSign> {
     int getSignedCount(String idYearMonth);
 
     int maxContinue(String idYearMonth);
+
+    Boolean sign(String idYearMonth);
 }
