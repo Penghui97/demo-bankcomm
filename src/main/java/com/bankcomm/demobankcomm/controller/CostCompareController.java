@@ -32,8 +32,8 @@ public class CostCompareController {
     private INewSignService newSignService;
 
     // 比较获取签到列表，n代表数据量大小，大于等于1的正整数
-    @GetMapping("/getSignInfo/{n}")
-    public Map<String, Object> getSignedCount(@PathVariable int n) {
+    @GetMapping("/getSignList/{n}")
+    public Map<String, Object> getSignList(@PathVariable int n) {
         Random random = new Random();
         int totalOld = 0;
         int totalNew = 0;
@@ -66,6 +66,107 @@ public class CostCompareController {
         }
         Map<String, Object> result = new HashMap<>();
         totalDifference = totalOld - totalNew;
+
+        // 老签到总耗时
+        result.put("old_sign_total", totalOld);
+        // 新签到总耗时
+        result.put("new_sign_total", totalNew);
+        // 新老签到总耗时差
+        result.put("difference_total", totalDifference);
+        // 性能提升比率
+        double rate = (double) totalDifference / totalOld;
+        result.put("optimized_rate", new DecimalFormat("0.00").format(rate * 100) + "%");
+        // 请求参数列表
+        result.put("key_list", keyList);
+        return result;
+    }
+
+    // 比较获取签到次数，n代表数据量大小，大于等于1的正整数
+    @GetMapping("/getSignedCount/{n}")
+    public  Map<String, Object> getSignedCount(@PathVariable int n){
+        Random random = new Random();
+        int totalOld = 0;
+        int totalNew = 0;
+        int totalDifference = 0;
+        ArrayList<String> keyList = new ArrayList<>();
+        // 循环次数由请求链接中参数n决定
+        for (int i = 0; i < n; i++) {
+            // 初始化计时器
+            StopWatch oldWatch = new StopWatch();
+            StopWatch newWatch = new StopWatch();
+            // 随机生成查询参数字符串，并保存到 keyList
+            String str = "t" + random.nextInt(350000) + ":" + "2023-0" + (random.nextInt(9) + 1);
+            keyList.add(str);
+            // 先各跑一遍，去除连接数据库耗时影响
+            oldSignService.signedCount(str);
+            newSignService.getSignedCount(str);
+            // 老签到计时
+            oldWatch.start();
+            oldSignService.getSignedList(str);
+            oldWatch.stop();
+            long oldSign = oldWatch.getTotalTimeMillis();
+            // 新签到计时
+            newWatch.start();
+            newSignService.getSignedCount(str);
+            newWatch.stop();
+            long newSign = newWatch.getTotalTimeMillis();
+            // 计算差值
+            totalOld += oldSign;
+            totalNew += newSign;
+        }
+        Map<String, Object> result = new HashMap<>();
+        totalDifference = totalOld - totalNew;
+
+        // 老签到总耗时
+        result.put("old_sign_total", totalOld);
+        // 新签到总耗时
+        result.put("new_sign_total", totalNew);
+        // 新老签到总耗时差
+        result.put("difference_total", totalDifference);
+        // 性能提升比率
+        double rate = (double) totalDifference / totalOld;
+        result.put("optimized_rate", new DecimalFormat("0.00").format(rate * 100) + "%");
+        // 请求参数列表
+        result.put("key_list", keyList);
+        return result;
+    }
+
+    // 比较获取最大连续签到次数，n代表数据量大小，大于等于1的正整数
+    @GetMapping("/maxContinue/{n}")
+    public Map<String, Object> maxContinue(@PathVariable int n){
+        Random random = new Random();
+        int totalOld = 0;
+        int totalNew = 0;
+        int totalDifference = 0;
+        ArrayList<String> keyList = new ArrayList<>();
+        // 循环次数由请求链接中参数n决定
+        for (int i = 0; i < n; i++) {
+            // 初始化计时器
+            StopWatch oldWatch = new StopWatch();
+            StopWatch newWatch = new StopWatch();
+            // 随机生成查询参数字符串，并保存到 keyList
+            String str = "t" + random.nextInt(350000) + ":" + "2023-0" + (random.nextInt(9) + 1);
+            keyList.add(str);
+            // 先各跑一遍，去除连接数据库耗时影响
+            oldSignService.maxContinue(str);
+            newSignService.maxContinue(str);
+            // 老签到计时
+            oldWatch.start();
+            oldSignService.maxContinue(str);
+            oldWatch.stop();
+            long oldSign = oldWatch.getTotalTimeMillis();
+            // 新签到计时
+            newWatch.start();
+            newSignService.maxContinue(str);
+            newWatch.stop();
+            long newSign = newWatch.getTotalTimeMillis();
+            // 计算差值
+            totalOld += oldSign;
+            totalNew += newSign;
+        }
+        Map<String, Object> result = new HashMap<>();
+        totalDifference = totalOld - totalNew;
+
         // 老签到总耗时
         result.put("old_sign_total", totalOld);
         // 新签到总耗时
