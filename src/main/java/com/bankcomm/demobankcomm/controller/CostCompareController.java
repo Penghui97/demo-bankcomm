@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,7 +35,6 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
         Random random = new Random();
         int totalOld = 0;
         int totalNew = 0;
-        int totalDifference = 0;
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -55,31 +51,18 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             oldWatch.start();
             oldSignService.getSignedList(str);
             oldWatch.stop();
-            long oldSign = oldWatch.getTotalTimeMillis();
+            long oldSign = oldWatch.getTotalTimeNanos();
             // 新签到计时
             newWatch.start();
             newSignService.getNewSignDTO(str);
             newWatch.stop();
-            long newSign = newWatch.getTotalTimeMillis();
+            long newSign = newWatch.getTotalTimeNanos();
             // 计算差值
             totalOld += oldSign;
             totalNew += newSign;
         }
-        Map<String, Object> result = new HashMap<>();
-        totalDifference = totalOld - totalNew;
 
-        // 老签到总耗时
-        result.put("old_sign_total", totalOld);
-        // 新签到总耗时
-        result.put("new_sign_total", totalNew);
-        // 新老签到总耗时差
-        result.put("difference_total", totalDifference);
-        // 性能提升比率
-        double rate = (double) totalDifference / totalOld;
-        result.put("optimized_rate", new DecimalFormat("0.00").format(rate * 100) + "%");
-        // 请求参数列表
-        result.put("id_list", idList);
-        return result;
+        return getResultMap(totalOld, totalNew, idList);
     }
 
     // 比较获取签到次数，n代表数据量大小，大于等于1的正整数
@@ -88,7 +71,6 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
         Random random = new Random();
         int totalOld = 0;
         int totalNew = 0;
-        int totalDifference = 0;
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -105,31 +87,18 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             oldWatch.start();
             oldSignService.getSignedList(str);
             oldWatch.stop();
-            long oldSign = oldWatch.getTotalTimeMillis();
+            long oldSign = oldWatch.getTotalTimeNanos();
             // 新签到计时
             newWatch.start();
             newSignService.getSignedCount(str);
             newWatch.stop();
-            long newSign = newWatch.getTotalTimeMillis();
+            long newSign = newWatch.getTotalTimeNanos();
             // 计算差值
             totalOld += oldSign;
             totalNew += newSign;
         }
-        Map<String, Object> result = new HashMap<>();
-        totalDifference = totalOld - totalNew;
 
-        // 老签到总耗时
-        result.put("old_sign_total", totalOld);
-        // 新签到总耗时
-        result.put("new_sign_total", totalNew);
-        // 新老签到总耗时差
-        result.put("difference_total", totalDifference);
-        // 性能提升比率
-        double rate = (double) totalDifference / totalOld;
-        result.put("optimized_rate", new DecimalFormat("0.00").format(rate * 100) + "%");
-        // 请求参数列表
-        result.put("id_list", idList);
-        return result;
+        return getResultMap(totalOld, totalNew, idList);
     }
 
     // 比较获取最大连续签到次数，n代表数据量大小，大于等于1的正整数
@@ -138,7 +107,6 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
         Random random = new Random();
         int totalOld = 0;
         int totalNew = 0;
-        int totalDifference = 0;
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -155,40 +123,26 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             oldWatch.start();
             oldSignService.maxContinue(str);
             oldWatch.stop();
-            long oldSign = oldWatch.getTotalTimeMillis();
+            long oldSign = oldWatch.getTotalTimeNanos();
             // 新签到计时
             newWatch.start();
             newSignService.maxContinue(str);
             newWatch.stop();
-            long newSign = newWatch.getTotalTimeMillis();
+            long newSign = newWatch.getTotalTimeNanos();
             // 计算差值
             totalOld += oldSign;
             totalNew += newSign;
         }
-        Map<String, Object> result = new HashMap<>();
-        totalDifference = totalOld - totalNew;
 
-        // 老签到总耗时
-        result.put("old_sign_total", totalOld);
-        // 新签到总耗时
-        result.put("new_sign_total", totalNew);
-        // 新老签到总耗时差
-        result.put("difference_total", totalDifference);
-        // 性能提升比率
-        double rate = (double) totalDifference / totalOld;
-        result.put("optimized_rate", new DecimalFormat("0.00").format(rate * 100) + "%");
-        // 请求参数列表
-        result.put("id_list", idList);
-        return result;
+        return getResultMap(totalOld, totalNew, idList);
     }
 
     // 比较签到功能，n代表数据量大小，大于等于1的正整数
     @GetMapping("/sign/{n}")
     public  Map<String, Object> sign(@PathVariable int n) {
         Random random = new Random();
-        int totalOld = 0;
+        double totalOld = 0;
         double totalNew = 0;
-        double totalDifference = 0;
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -238,7 +192,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             oldWatch.start();
             oldSignService.sign(str);
             oldWatch.stop();
-            long oldSign = oldWatch.getTotalTimeMillis();
+            long oldSign = oldWatch.getTotalTimeNanos();
             // 新签到计时
             newWatch.start();
             newSignService.sign(jsonStr);
@@ -246,32 +200,18 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             long newSign = newWatch.getTotalTimeNanos();
             // 计算差值
             totalOld += oldSign;
-            totalNew += (double) newSign / 1000000;
+            totalNew += newSign;
         }
-        Map<String, Object> result = new HashMap<>();
-        totalDifference = totalOld - totalNew;
 
-        // 老签到总耗时
-        result.put("old_sign_total", totalOld);
-        // 新签到总耗时
-        result.put("new_sign_total", totalNew);
-        // 新老签到总耗时差
-        result.put("difference_total", totalDifference);
-        // 性能提升比率
-        double rate = (double) totalDifference / totalOld;
-        result.put("optimized_rate", new DecimalFormat("0.00").format(rate * 100) + "%");
-        // 请求参数列表
-        result.put("id_list", idList);
-        return result;
+        return getResultMap(totalOld, totalNew, idList);
     }
 
     // 比较补签功能，n代表数据量大小，大于等于1的正整数
     @GetMapping("/supplementary/{n}")
     public  Map<String, Object> supplementary(@PathVariable int n){
         Random random = new Random();
-        int totalOld = 0;
+        double totalOld = 0;
         double totalNew = 0;
-        double totalDifference = 0;
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -321,7 +261,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             oldWatch.start();
             oldSignService.supplementary(str);
             oldWatch.stop();
-            long oldSign = oldWatch.getTotalTimeMillis();
+            long oldSign = oldWatch.getTotalTimeNanos();
             // 新签到计时
             newWatch.start();
             newSignService.supplementary(jsonStr);
@@ -329,15 +269,20 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             long newSign = newWatch.getTotalTimeNanos();
             // 计算差值
             totalOld += oldSign;
-            totalNew += (double) newSign / 1000000;
+            totalNew += newSign;
         }
+        return getResultMap(totalOld, totalNew, idList);
+    }
+
+    // 获取返回Map
+    private Map<String, Object> getResultMap(double totalOld, double totalNew, ArrayList<String> idList){
         Map<String, Object> result = new HashMap<>();
-        totalDifference = totalOld - totalNew;
+        double totalDifference = totalOld - totalNew;
 
         // 老签到总耗时
-        result.put("old_sign_total", totalOld);
+        result.put("old_sign_total", totalOld/1000000);
         // 新签到总耗时
-        result.put("new_sign_total", totalNew);
+        result.put("new_sign_total", totalNew/1000000);
         // 新老签到总耗时差
         result.put("difference_total", totalDifference);
         // 性能提升比率
