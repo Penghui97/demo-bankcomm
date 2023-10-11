@@ -31,13 +31,43 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Service
 public class NewSignServiceImp extends ServiceImpl<NewSignMapper, NewSign> implements INewSignService {
-    private static final ExecutorService SIGN_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final ExecutorService SIGN_EXECUTOR = Executors.newFixedThreadPool(2);
     @PostConstruct
     private void init() {
         SIGN_EXECUTOR.submit(new SignHandler());
+        SIGN_EXECUTOR.submit(new GetSignHandler());
     }
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Data
+    @AllArgsConstructor
+    private static class GetSignData {
+        private String key;
+        private String signed;
+    }
+
+    private final BlockingQueue<GetSignData> getSignDataTasks = new LinkedBlockingQueue<>();
+    // 插入redis的任务
+    private class GetSignHandler implements Runnable {
+
+        @Override
+        public void run() {
+            for (;;) {
+                try {
+                    GetSignData getSignData = getSignDataTasks.take();
+                    String s = getSignData.getSigned();
+                    for (int i = 0; i < s.length(); i++) {
+                        char c = s.charAt(i);
+                        stringRedisTemplate.opsForValue().setBit(getSignData.getKey(), i, c == '1');
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }
+    }
     public NewSignDTO getNewSignDTO(String idYearMonth) {
         String key = idYearMonth.replace('-', ':');
         List<Long> result = stringRedisTemplate.opsForValue().bitField(
@@ -49,10 +79,8 @@ public class NewSignServiceImp extends ServiceImpl<NewSignMapper, NewSign> imple
         if (result == null || result.isEmpty()) {
             NewSign newSign = getById(idYearMonth);
             String s = ByteConvertUtil.byteArray2BinaryString(newSign.getSigned());
-            for (int i = 0; i < s.length(); i++) {
-                char c = s.charAt(i);
-                stringRedisTemplate.opsForValue().setBit(key, i, c == '1');
-            }
+            // 异步插入redis
+            getSignDataTasks.add(new GetSignData(key, s));
             return new NewSignDTO(newSign.getId(), s);
         }
         // 如果redis中有数据，直接返回
