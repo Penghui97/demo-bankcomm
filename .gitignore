@@ -8,3 +8,4 @@
 # Maven
 log/
 target/
+src/test/java/com/bankcomm/demobankcomm/NewSignTest.java
