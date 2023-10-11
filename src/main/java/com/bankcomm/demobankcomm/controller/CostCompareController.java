@@ -36,8 +36,10 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
         // 初始化计时器
         StopWatch oldWatch = new StopWatch();
         StopWatch newWatch = new StopWatch();
-        int totalOld = 0;
-        int totalNew = 0;
+        // 存储新老签到总的耗时
+        double totalOld = 0;
+        double totalNew = 0;
+        // 存储所有的主键 id
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -61,7 +63,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             newSignService.getNewSignDTO(id);
             newWatch.stop();
             long newSign = newWatch.getLastTaskTimeNanos();
-            // 计算差值
+            // 分别累加总时间
             totalOld += oldSign;
             totalNew += newSign;
         }
@@ -74,8 +76,10 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
         // 初始化计时器
         StopWatch oldWatch = new StopWatch();
         StopWatch newWatch = new StopWatch();
-        int totalOld = 0;
-        int totalNew = 0;
+        // 存储新老签到总的耗时
+        double totalOld = 0;
+        double totalNew = 0;
+        // 存储所有的主键 id
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -99,7 +103,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             newSignService.getSignedCount(id);
             newWatch.stop();
             long newSign = newWatch.getLastTaskTimeNanos();
-            // 计算差值
+            // 分别累加总时间
             totalOld += oldSign;
             totalNew += newSign;
         }
@@ -112,8 +116,10 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
         // 初始化计时器
         StopWatch oldWatch = new StopWatch();
         StopWatch newWatch = new StopWatch();
-        int totalOld = 0;
-        int totalNew = 0;
+        // 存储新老签到总的耗时
+        double totalOld = 0;
+        double totalNew = 0;
+        // 存储所有的主键 id
         ArrayList<String> idList = new ArrayList<>();
         // 循环次数由请求链接中参数n决定
         for (int i = 0; i < n; i++) {
@@ -137,7 +143,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             newSignService.maxContinue(id);
             newWatch.stop();
             long newSign = newWatch.getLastTaskTimeNanos();
-            // 计算差值
+            // 分别累加总时间
             totalOld += oldSign;
             totalNew += newSign;
         }
@@ -292,7 +298,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
         // 新老签到总耗时差
         result.put("difference_total", totalDifference/1000000);
         // 性能提升比率
-        double rate = (double) totalDifference / totalOld;
+        double rate = totalDifference / totalOld;
         result.put("optimized_rate", new DecimalFormat("0.00").format(rate * 100) + "%");
         // 请求参数列表
         result.put("id_list", idList);
