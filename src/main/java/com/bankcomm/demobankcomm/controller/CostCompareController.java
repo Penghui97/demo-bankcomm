@@ -162,7 +162,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             String oldSignParam = params.get("oldSignParam").toString();
             Map<String, Object> json = (Map<String, Object>) params.get("newSignParam");
             String newSignParam = JSONUtil.parse(json).toString();
-            idList.add(json.get("id").toString());
+            idList.add(oldSignParam);
             // 删除已有数据
             deleteTestData(oldSignParam, json);
             // 先各跑一遍，去除连接数据库耗时影响
@@ -207,7 +207,7 @@ public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
             String oldSignParam = params.get("oldSignParam").toString();
             Map<String, Object> json = (Map<String, Object>) params.get("newSignParam");
             String newSignParam = JSONUtil.parse(json).toString();
-            idList.add(json.get("id").toString());
+            idList.add(oldSignParam);
             // 删除已有数据
             deleteTestData(oldSignParam, json);
             // 先各跑一遍，去除连接数据库耗时影响
