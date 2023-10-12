@@ -23,6 +23,7 @@ import java.util.*;
 @RestController
 @Slf4j
 @RequestMapping("/costCompare")
+@CrossOrigin
 @SuppressWarnings("unchecked")
 public class CostCompareController extends ServiceImpl<OldSignMapper, OldSign> {
     @Resource
