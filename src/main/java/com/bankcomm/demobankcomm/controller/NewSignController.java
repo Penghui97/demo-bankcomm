@@ -18,6 +18,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequestMapping("/newSign")
+@CrossOrigin
 public class NewSignController {
 
     @Resource
