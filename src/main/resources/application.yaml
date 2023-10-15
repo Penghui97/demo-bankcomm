@@ -5,11 +5,11 @@ spring:
     name: demobankcomm
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://10.10.129.211:3306/demoBankComm?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true # 10.10.129.211 替换 127.0.0.1
+    url: jdbc:mysql://127.0.0.1:3306/demoBankComm?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true # 10.10.129.211 替换 127.0.0.1
     username: root
     password: a05586947521
   redis:
-    host: 10.10.129.211 # 10.10.129.211 替换 127.0.0.1
+    host: 127.0.0.1 # 10.10.129.211 替换 127.0.0.1
     port: 6379
     password: penghui
     lettuce:

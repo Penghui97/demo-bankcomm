@@ -77,6 +77,7 @@ public class NewSignServiceImp extends ServiceImpl<NewSignMapper, NewSign> imple
         );
         // 如果redis中没有数据，从数据库获取并储存到redis
         if (result == null || result.isEmpty()) {
+            // 从数据库获取
             NewSign newSign = getById(idYearMonth);
             String s = ByteConvertUtil.byteArray2BinaryString(newSign.getSigned());
             // 异步插入redis
