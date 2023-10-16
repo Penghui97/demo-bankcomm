@@ -324,13 +324,12 @@ class NewSignTest {
     }
 
     @Test
-    void testKey() {
-        String m = "123:2023-02-08";
-        String temp = m.replace('-', ':');
-        String key = temp.substring(0, temp.length() - 3);
-        log.info("key " + key);
-        int day = Integer.parseInt(temp.substring(temp.length() - 2));
-        log.info("day " + day);
+    void addOct() {
+        String key = "10000:2023:10";
+        String signed = "1010010111";
+        for (int i = 0; i < signed.length(); i++) {
+            stringRedisTemplate.opsForValue().setBit(key, i, signed.charAt(i) == '1');
+        }
     }
 }
 

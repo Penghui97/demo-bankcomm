@@ -18,6 +18,7 @@ import java.util.*;
 @RestController
 @Slf4j
 @RequestMapping("/oldSign")
+@CrossOrigin
 public class OldSignController {
     @Resource
     private IOldSignService oldSignService;
