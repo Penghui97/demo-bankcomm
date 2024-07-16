@@ -44,7 +44,7 @@ public class testController {
     @GetMapping("/testLock/{userId}")
     public String testLock(@PathVariable String userId) {
         RLock lock = redissonClient.getLock("lock");
-        boolean isLock = false;
+        boolean isLock;
         try {
             isLock = lock.tryLock(30L, 30L, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
