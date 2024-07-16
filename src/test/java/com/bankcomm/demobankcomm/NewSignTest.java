@@ -1,10 +1,12 @@
 package com.bankcomm.demobankcomm;
 
+import com.bankcomm.demobankcomm.dto.NewSignDTO;
 import com.bankcomm.demobankcomm.entity.NewSign;
 import com.bankcomm.demobankcomm.entity.OldSign;
 import com.bankcomm.demobankcomm.service.INewSignService;
 import com.bankcomm.demobankcomm.service.IOldSignService;
 import com.bankcomm.demobankcomm.utils.ByteConvertUtil;
+import com.bankcomm.demobankcomm.utils.NewSignConvert;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -329,6 +331,30 @@ class NewSignTest {
         String signed = "1010010111";
         for (int i = 0; i < signed.length(); i++) {
             stringRedisTemplate.opsForValue().setBit(key, i, signed.charAt(i) == '1');
+        }
+    }
+
+    @Test
+    void addRedis() {
+        for (int i = 1; i <= 9; i++) {
+            String id = "10000:2023-0" + i;
+            String key = "10000:2023:0" + i;
+            NewSign newSign = newSignService.getById(id);
+            NewSignDTO newSignDTO = NewSignConvert.toFrontEnd(newSign);
+            String value = newSignDTO.getSigned();
+            log.info(value);
+            for (int j = 0; j < value.length(); j++) {
+                stringRedisTemplate.opsForValue().setBit(key, j, value.charAt(j) == '1');
+            }
+        }
+        String id = "10000:2023-10";
+        String key = "10000:2023:10";
+        NewSign newSign = newSignService.getById(id);
+        NewSignDTO newSignDTO = NewSignConvert.toFrontEnd(newSign);
+        String value = newSignDTO.getSigned();
+        log.info(value);
+        for (int j = 0; j < value.length(); j++) {
+            stringRedisTemplate.opsForValue().setBit(key, j, value.charAt(j) == '1');
         }
     }
 }
