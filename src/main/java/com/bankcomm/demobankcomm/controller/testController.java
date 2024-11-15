@@ -6,9 +6,11 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.domain.geo.GeoLocation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -181,6 +183,20 @@ public class testController {
         return "请重试" + userId;
     }
 
+    // 获取所有地理信息
+    @GetMapping("/getGeoListFromRedis/{key}")
+    public List<GeoLocation<String>> getGeoListFromRedis(@PathVariable String key) {
+        Set<String> coordinate = stringRedisTemplate.opsForZSet().
+                range(key, 0, -1);// 获取所有member
+        assert coordinate != null;
+        List<GeoLocation<String>> list = new ArrayList<>();
+        for (String member : coordinate) {
+            list.add(new GeoLocation<>(member,
+                    Objects.requireNonNull(stringRedisTemplate.opsForGeo().
+                            position(key, member)).get(0)));
+        }
+        return list;
+    }
 
 }
 
