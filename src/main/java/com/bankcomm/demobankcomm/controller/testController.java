@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.geo.Point;
@@ -34,6 +35,9 @@ public class testController {
     private RedissonClient redissonClient;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    @Qualifier("remoteStringRedisTemplate")
+    private StringRedisTemplate remoteRedisTemplate;
 
     // 测试用
     @GetMapping("/test")
@@ -196,6 +200,48 @@ public class testController {
                             position(key, member)).get(0)));
         }
         return list;
+    }
+
+    // 无锁双写
+    @GetMapping("/doubleWrite/{key}/{value}")
+    public String doubleWrite(@PathVariable String key, @PathVariable String value) {
+        // 写本地 Redis
+        stringRedisTemplate.opsForValue().set(key, value);
+        log.info("写入本地 key: " + key + ", value: " + value);
+        // 写远程 Redis
+        remoteRedisTemplate.opsForValue().set(key, value);
+        log.info("写入远程 key: " + key + ", value: " + value);
+        return "Double write key: " + key + ", value: " + value;
+    }
+
+    // 有锁双写
+    @GetMapping("/doubleWriteLock/{key}/{value}")
+    public String doubleWriteLock(@PathVariable String key, @PathVariable String value) {
+        String lockKey = "lock:write:" + key;
+        RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            // 获取锁（最多等30秒，锁保持60秒自动释放）
+            if (lock.tryLock(30, 60, TimeUnit.SECONDS)) {
+                // 写远程 Redis
+                remoteRedisTemplate.opsForValue().set(key, value);
+                log.info("写入远程 key: " + key + ", value: " + value);
+                // 写本地 Redis
+                stringRedisTemplate.opsForValue().set(key, value);
+                log.info("写入本地 key: " + key + ", value: " + value);
+            } else {
+                log.info("获取锁失败，跳过双写操作");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("加锁时被中断");
+        } finally {
+            // 释放锁（先判断再释放，防止误解锁）
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+        return "Double write with lock key: " + key + ", value: " + value;
     }
 
 }
