@@ -141,7 +141,23 @@ class RedisTest {
         }
     }
 
+    @Test
+    void testTime() {
+        String key = "number";
+        String value = "10";
+        long start = System.currentTimeMillis();
 
+        // 本地写入
+        stringRedisTemplate.opsForValue().set(key, value);
+        long localWriteEnd = System.currentTimeMillis();
+
+        // 远程写入
+        remoteRedisTemplate.opsForValue().set(key, value);
+        long remoteWriteEnd = System.currentTimeMillis();
+
+        log.info("✅ 本地 Redis 写入耗时: " + (localWriteEnd - start) + " ms");
+        log.info("✅ 远程 Redis 写入耗时: " + (remoteWriteEnd - localWriteEnd) + " ms");
+    }
 
 }
 

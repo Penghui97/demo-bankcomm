@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -205,12 +206,13 @@ public class testController {
     // 无锁双写
     @GetMapping("/doubleWrite/{key}/{value}")
     public String doubleWrite(@PathVariable String key, @PathVariable String value) {
-        // 写本地 Redis
-        stringRedisTemplate.opsForValue().set(key, value);
-        log.info("写入本地 key: " + key + ", value: " + value);
         // 写远程 Redis
         remoteRedisTemplate.opsForValue().set(key, value);
         log.info("写入远程 key: " + key + ", value: " + value);
+        // 写本地 Redis
+        stringRedisTemplate.opsForValue().set(key, value);
+        log.info("写入本地 key: " + key + ", value: " + value);
+
         return "Double write key: " + key + ", value: " + value;
     }
 
@@ -242,6 +244,39 @@ public class testController {
             }
         }
         return "Double write with lock key: " + key + ", value: " + value;
+    }
+
+    @GetMapping("/doubleWriteFast/{key}/{value}")
+    public String doubleWriteFast(@PathVariable String key, @PathVariable String value) {
+        String lockKey = "lock:write:" + key;
+        RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            if (lock.tryLock(30, 60, TimeUnit.SECONDS)) {
+                // ✅ 先快速写本地 Redis
+                stringRedisTemplate.opsForValue().set(key, value);
+                log.info("✅ 本地写入成功: " + key + " = " + value);
+                // ✅ 异步写远程 Redis，不阻塞主线程
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        remoteRedisTemplate.opsForValue().set(key, value);
+                    } catch (Exception e) {
+                        log.error("❌ 远程 Redis 写入失败: key={}, value={}", key, value, e);
+                    }
+                });
+            } else {
+                log.warn("❌ 获取锁失败，跳过双写操作: {}", key);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("线程中断");
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+
+        return "异步远程写：key = " + key + ", value = " + value;
     }
 
 }
