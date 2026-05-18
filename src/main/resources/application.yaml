@@ -34,9 +34,9 @@ logging:
 
 remote:
   redis:
-    host: redis-13241.c15.us-east-1-4.ec2.redns.redis-cloud.com
-    port: 13241
-    password: dkMOA3ok9lI1gPsELNogIe6Povgb44Nd
+    host: redis-18909.c74.us-east-1-4.ec2.redns.redis-cloud.com
+    port: 18909
+    password: lnm4d66Fp3hJQ7uktxbv8TOSejCwUqQI
     lettuce:
       pool:
         max-active: 200

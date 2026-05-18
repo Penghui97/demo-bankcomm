@@ -11,6 +11,8 @@ import org.springframework.data.geo.*;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.domain.geo.GeoLocation;
 
@@ -157,6 +159,111 @@ class RedisTest {
 
         log.info("✅ 本地 Redis 写入耗时: " + (localWriteEnd - start) + " ms");
         log.info("✅ 远程 Redis 写入耗时: " + (remoteWriteEnd - localWriteEnd) + " ms");
+    }
+
+    @Test
+    void deleteKeys() {
+        Set<String> keys = remoteRedisTemplate.keys("mset:key:" + "*");
+        log.info("Set: " + keys);
+        if (keys != null && !keys.isEmpty()) {
+            remoteRedisTemplate.delete(keys);
+        }
+    }
+
+    @Test
+    void pipelineWriteTest() { //批量
+        long start = System.currentTimeMillis();
+
+        List<Object> results = stringRedisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            for (int i = 1; i <= 10; i++) {
+                String key = "pipeline:key:" + i;
+                String value = "value-" + i;
+                byte[] rawKey = stringRedisTemplate.getStringSerializer().serialize(key);
+                byte[] rawValue = stringRedisTemplate.getStringSerializer().serialize(value);
+                connection.set(rawKey, rawValue);
+            }
+            return null;
+        });
+
+        long end = System.currentTimeMillis();
+        log.info("📦 本地Pipeline 插入10条执行总耗时: {} ms", end - start);
+
+    }
+
+    @Test
+    void nonPipelineWriteTest() { //非批量
+        long start = System.currentTimeMillis();
+
+        for (int i = 1; i <= 10; i++) {
+            String key = "nonpipeline:key:" + i;
+            String value = "value-" + i;
+            stringRedisTemplate.opsForValue().set(key, value);
+        }
+
+        long end = System.currentTimeMillis();
+        log.info("📝 本地非Pipeline 插入10条执行总耗时: {} ms", end - start);
+    }
+
+    @Test
+    void pipelineWriteTestR() {
+        long start = System.currentTimeMillis();
+
+        List<Object> results = remoteRedisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            for (int i = 1; i <= 1000; i++) {
+                String key = "pipeline:key:" + i;
+                String value = "value-" + i;
+                byte[] rawKey = remoteRedisTemplate.getStringSerializer().serialize(key);
+                byte[] rawValue = remoteRedisTemplate.getStringSerializer().serialize(value);
+                connection.set(rawKey, rawValue);
+            }
+            return null;
+        });
+
+        long end = System.currentTimeMillis();
+        log.info("远程Pipeline 插入1000条执行总耗时: {} ms", end - start);
+
+    }
+
+    @Test
+    void nonPipelineWriteTestR() {
+        long start = System.currentTimeMillis();
+
+        for (int i = 1; i <= 1000; i++) {
+            String key = "nonpipeline:key:" + i;
+            String value = "value-" + i;
+            remoteRedisTemplate.opsForValue().set(key, value);
+        }
+
+        long end = System.currentTimeMillis();
+        log.info("远程非Pipeline 插入10条执行总耗时: {} ms", end - start);
+    }
+
+    @Test
+    void mSet() { // mset本地
+        long start = System.currentTimeMillis();
+
+        Map<String, String> map = new HashMap<>();
+        for (int i = 1; i <= 1000; i++) {
+            map.put("mset:key:" + i, "value-" + i);
+        }
+        remoteRedisTemplate.opsForValue().multiSet(map);
+
+        long end = System.currentTimeMillis();
+        log.info("本地mSet插入1000条执行总耗时: {} ms", end - start);
+    }
+
+    @Test
+    void mSetR() { // mset远程
+        long start = System.currentTimeMillis();
+
+        Map<String, String> map = new HashMap<>();
+        for (int i = 1; i <= 1000; i++) {
+            map.put("mset:key:" + i, "value-" + i);
+        }
+        remoteRedisTemplate.opsForValue().multiSet(map);
+
+        long end = System.currentTimeMillis();
+        log.info("远程mSet插入1000条执行总耗时: {} ms", end - start);
     }
 
 }
